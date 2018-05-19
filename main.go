@@ -19,6 +19,7 @@ var downstream chan message
 
 func processMessage(msg message) {
 	msg.Body = strings.Replace(msg.Body, "alot", " a lot", -1)
+	time.Sleep(10  * time.Millisecond)
 	downstream <- msg
 
 }
