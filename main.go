@@ -27,7 +27,7 @@ func processMessage(msg message) {
 func upstreamReceive() {
 	for {
 		msg := <-upstream
-		processMessage(msg)
+		go processMessage(msg)
 	}
 }
 
