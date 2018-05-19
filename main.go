@@ -17,17 +17,24 @@ type message struct {
 var upstream chan message
 var downstream chan message 
 
-func processMessage(msg message) {
+func processMessage(msg message, chin, chout chan struct{}) {
+	defer func(){chout <- struct{}{}}()
 	msg.Body = strings.Replace(msg.Body, "alot", " a lot", -1)
 	time.Sleep(10  * time.Millisecond)
+	<-chin
 	downstream <- msg
 
 }
 
 func upstreamReceive() {
+	chin := make(chan struct{})
+	close(chin)
+
 	for {
 		msg := <-upstream
-		go processMessage(msg)
+		chout := make(chan struct{})
+		go processMessage(msg, chin, chout)
+		chin = chout
 	}
 }
 
